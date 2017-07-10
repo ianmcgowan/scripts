@@ -1,13 +1,13 @@
 function doMerge() {
   // This will run into various google limits - only x emails per day, y documents created etc.
-  // Getting a couple of people to run it helps or just be patient and do 30 per day ;-)
+  // Getting a couple of people to run it helps or just be patient and do 30-40 per day ;-)
   // Column headings expected are:
   // +------+------+------+-----+-----------+------+---------+-------+-------+--------+-------+
   // |  A   |  B   |  C   |  D  |     E     |  F   |    G    |   H   |  I    |   J    |   K   |
   // +------+------+------+-----+-----------+------+---------+-------+-------+--------+-------+
   // | Item | Date | Time | Qty | Net Sales | Name | Details | Order | Email | Status | Notes |
   // +------+------+------+-----+-----------+------+---------+-------+-------+--------+-------+
-  var selectedTemplateId = "xxxxxxxxxxxxxxxxxxxxxxxxx";//Copy and paste the ID of the template document here (you can find this in the document's URL)
+  var selectedTemplateId = "1xxxxxxxxxxxxxxxxxxxxxxxx";//Copy and paste the ID of the template document here (you can find this in the document's URL)
   var templateFile = DriveApp.getFileById(selectedTemplateId);
   var sheet = SpreadsheetApp.getActiveSheet();//current sheet
   var rows = sheet.getDataRange();
@@ -22,7 +22,7 @@ function doMerge() {
     var name=row[5];
     var email=row[8];
     var stat=row[9];
-    if (stat != "Sent") {
+    if (stat != "Sent" && email != "") {
       var mergedFile = templateFile.makeCopy();
       mergedFile.setName("ParkingPass_"+item+"_"+name);
       var mergedDoc = DocumentApp.openById(mergedFile.getId());
@@ -68,6 +68,7 @@ function doMerge() {
 
 function onOpen() {
   var spreadsheet = SpreadsheetApp.getActiveSpreadsheet();
+  spreadsheet.toast('1) Add rows from Square Transaction Report.\n2) Click Merge on menu to create and email Parking Passes.\n3) Tools, Script Editor to view macro', 'Welcome', 30);
   var entries = [{
     name : "Create Parking Passes",
     functionName : "doMerge"
