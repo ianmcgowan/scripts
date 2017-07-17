@@ -1,0 +1,58 @@
+#!/bin/bash
+menu=$1
+if [ -e "$menu" ]; then
+    echo "Parsing $menu"
+else
+    echo "Usage: menu3 path-to-menu-file"
+    exit 1
+fi
+
+# Read the descriptions and paths into two arrays: desc, path
+# For each line, make sure path is a directory and contains VOC
+i=1
+while read line 
+do
+    # Split each line on semi-colon
+    IFS=\; tmp=(${line})
+    desc[$i]=${tmp[0]}
+    path[$i]=${tmp[1]}
+    if [ ! -d ${tmp[1]} ]; then
+        echo "Invalid path at line $i : ${tmp[1]}"
+        exit 1
+    fi
+    if [ ! -f "${tmp[1]}/VOC" ]; then
+        echo "Not an Infolease Account at line $i : ${tmp[1]}"
+        exit 1
+    fi
+    i=$((i+1))
+done < $menu
+
+# Display the menu
+while :
+do
+    clear
+    echo                          Welcome to `hostname`
+    echo
+    max=${#desc[@]} # Total number of entries in array
+    max=$((max+1))  # Arrays are zero-based, so we need to add one
+    for (( i = 1 ; i < $max ; i++ )) do
+        printf "%2s) %-30s %s\n" $i ${desc[$i]} ${path[$i]}
+    done
+    echo
+    read -p "Enter your choice, / to exit: " sel
+    if [ "$sel" == "/" ]; then
+        exit
+    fi
+    check=`echo "$sel" | grep -E ^[0-9]+$`
+    if [ $? -eq 0 ]; then
+        p=${path["$sel"]}
+        if [ -d "$p" ]; then
+            cd $p
+            udt
+        else
+            read -p "Invalid choice or account (${p}) not found.  [ENTER] " aaa
+        fi
+    else
+        read -p "Please enter a number 1 to ${#desc[@]}.  [ENTER] " aaa
+    fi
+done
