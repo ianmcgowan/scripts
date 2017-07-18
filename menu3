@@ -1,16 +1,17 @@
 #!/bin/bash
 menu=$1
-if [ -e "$menu" ]; then
+if [ -f "$menu" ]; then
     echo "Parsing $menu"
 else
     echo "Usage: menu3 path-to-menu-file"
+    read -p "Press ENTER:"
     exit 1
 fi
 
 # Read the descriptions and paths into two arrays: desc, path
 # For each line, make sure path is a directory and contains VOC
 i=1
-while read line 
+while read line
 do
     # Split each line on semi-colon
     IFS=\; tmp=(${line})
@@ -18,10 +19,12 @@ do
     path[$i]=${tmp[1]}
     if [ ! -d ${tmp[1]} ]; then
         echo "Invalid path at line $i : ${tmp[1]}"
+        read -p "Press ENTER:" </dev/tty # Need to read from user, not file
         exit 1
     fi
     if [ ! -f "${tmp[1]}/VOC" ]; then
         echo "Not an Infolease Account at line $i : ${tmp[1]}"
+        read -p "Press ENTER:" </dev/tty
         exit 1
     fi
     i=$((i+1))
