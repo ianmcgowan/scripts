@@ -18,7 +18,10 @@ defscrollback 30000
  
 # Reset term info to xterm
 termcapinfo xterm ti@:te@
- 
+
+# Use bash
+shell /usr/bin/bash
+
 # Use ctrl-b, not the default ctrl-a
 escape ^Bb
  
